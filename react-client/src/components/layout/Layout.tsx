@@ -84,7 +84,9 @@ export function Layout({ children }: LayoutProps) {
         <nav className="mt-8 px-4">
           <ul className="space-y-1">
             {navigation.map((item) => {
-              const isActive = location.pathname === item.href;
+              const isActive =
+                location.pathname === item.href ||
+                location.pathname.startsWith(item.href + '/');
               return (
                 <li key={item.name}>
                   <Link
