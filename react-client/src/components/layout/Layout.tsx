@@ -4,7 +4,7 @@ import {
   FileText,
   Users,
   Calendar,
-  FlaskRound,
+  FlaskConical,
   Pill,
   BookOpen,
   Home,
@@ -26,7 +26,7 @@ const navigation = [
   { name: 'AI Summaries', href: '/ai-summaries', icon: FileText },
   { name: 'Patients', href: '/patients', icon: Users },
   { name: 'Encounters', href: '/encounters', icon: Calendar },
-  { name: 'Lab Results', href: '/lab-results', icon: FlaskRound },
+  { name: 'Lab Results', href: '/lab-results', icon: FlaskConical },
   { name: 'Medications', href: '/medications', icon: Pill },
   { name: 'Clinical References', href: '/clinical-references', icon: BookOpen },
 ];

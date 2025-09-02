@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useApiTokenCreate, useApiTokenRefreshCreate } from '../api/generated/gitdmApi';
 import { axiosClient } from '../api/http/axios-instance';
+import { queryClient } from '../main';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -106,12 +107,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     delete axiosClient.defaults.headers.common['Authorization'];
+    queryClient.clear(); // Clear React Query cache
     setIsAuthenticated(false);
-  };
+  }, []);
 
   const refreshToken = async () => {
     const refresh = localStorage.getItem(REFRESH_TOKEN_KEY);

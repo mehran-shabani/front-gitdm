@@ -7,7 +7,7 @@ import { Loading } from '../../components/ui/Loading';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { Eye, RefreshCw, Plus, Calendar, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { format, formatDistanceToNow } from 'date-fns';
+import { format, formatDistanceToNow, parseISO } from 'date-fns';
 
 export function EncountersList() {
   const { data, isLoading, error, refetch } = useApiEncountersList();
@@ -20,7 +20,7 @@ export function EncountersList() {
     return (
       <ErrorMessage
         title="Failed to load encounters"
-        message={error.message}
+        message={error instanceof Error ? error.message : 'Unknown error'}
         className="mt-8"
       />
     );
@@ -98,10 +98,10 @@ export function EncountersList() {
                         <Calendar className="h-4 w-4 text-gray-400" />
                         <div>
                           <div className="font-medium">
-                            {format(new Date(encounter.occurred_at), 'MMM dd, yyyy')}
+                            {format(parseISO(encounter.occurred_at), 'MMM dd, yyyy')}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {format(new Date(encounter.occurred_at), 'h:mm a')}
+                            {format(parseISO(encounter.occurred_at), 'h:mm a')}
                           </div>
                         </div>
                       </div>
@@ -135,7 +135,7 @@ export function EncountersList() {
                       </Link>
                     </TableCell>
                     <TableCell className="text-sm text-gray-500">
-                      {formatDistanceToNow(new Date(encounter.created_at), {
+                      {formatDistanceToNow(parseISO(encounter.created_at), {
                         addSuffix: true,
                       })}
                     </TableCell>

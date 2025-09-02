@@ -5,9 +5,9 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Loading } from '../../components/ui/Loading';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
-import { Eye, RefreshCw, Plus, FlaskRound, TrendingUp, TrendingDown } from 'lucide-react';
+import { Eye, RefreshCw, Plus, FlaskConical, TrendingUp, TrendingDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { format, formatDistanceToNow } from 'date-fns';
+import { format, formatDistanceToNow, parseISO } from 'date-fns';
 
 export function LabResultsList() {
   const { data, isLoading, error, refetch } = useApiLabResultsList();
@@ -133,7 +133,7 @@ export function LabResultsList() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <FlaskRound className="h-4 w-4 text-gray-400" />
+                        <FlaskConical className="h-4 w-4 text-gray-400" />
                         <code className="text-sm bg-gray-100 px-2 py-1 rounded">
                           {result.loinc}
                         </code>
@@ -145,10 +145,10 @@ export function LabResultsList() {
                     <TableCell>
                       <div>
                         <div className="font-medium">
-                          {format(new Date(result.taken_at), 'MMM dd, yyyy')}
+                          {format(parseISO(result.taken_at), 'MMM dd, yyyy')}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {formatDistanceToNow(new Date(result.taken_at), {
+                          {formatDistanceToNow(parseISO(result.taken_at), {
                             addSuffix: true,
                           })}
                         </div>

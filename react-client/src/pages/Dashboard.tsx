@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { FileText, Users, Calendar, FlaskRound, Pill, BookOpen, ArrowRight, Activity } from 'lucide-react';
+import { FileText, Users, Calendar, FlaskConical, Pill, BookOpen, ArrowRight, Activity } from 'lucide-react';
 
 const features = [
   {
@@ -31,7 +31,7 @@ const features = [
   {
     title: 'Lab Results',
     description: 'Track and review laboratory test results',
-    icon: FlaskRound,
+    icon: FlaskConical,
     href: '/lab-results',
     color: 'text-orange-600',
     bgColor: 'bg-orange-50',

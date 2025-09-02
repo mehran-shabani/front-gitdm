@@ -7,7 +7,7 @@ import { Loading } from '../../components/ui/Loading';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { Eye, RefreshCw, Plus, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
 export function PatientsList() {
   const { data, isLoading, error, refetch } = useApiPatientsList();
@@ -110,7 +110,7 @@ export function PatientsList() {
                     </TableCell>
                     <TableCell>
                       {patient.dob ? (
-                        format(new Date(patient.dob), 'MMM dd, yyyy')
+                        format(parseISO(patient.dob), 'MMM dd, yyyy')
                       ) : (
                         <span className="text-gray-400">Not set</span>
                       )}
@@ -134,7 +134,7 @@ export function PatientsList() {
                     </TableCell>
                     <TableCell className="text-sm text-gray-500">
                       {patient?.created_at
-                        ? format(new Date(patient.created_at), 'MMM dd, yyyy')
+                        ? format(parseISO(patient.created_at), 'MMM dd, yyyy')
                         : <span className="text-gray-400">Not set</span>}
                     </TableCell>
                     <TableCell className="text-right">

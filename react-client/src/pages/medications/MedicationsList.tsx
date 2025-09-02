@@ -5,10 +5,17 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Loading } from '../../components/ui/Loading';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
-import { Eye, RefreshCw, Plus, Pill, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Eye, RefreshCw, Plus, Pill, Clock, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { format, isBefore, isAfter } from 'date-fns';
+import { format, isBefore, isAfter, parseISO } from 'date-fns';
 import { FrequencyEnum } from '../../api/generated/gitdmApi.schemas';
+
+type MedicationStatus = {
+  status: 'scheduled' | 'active' | 'completed';
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  variant: 'secondary' | 'default' | 'outline';
+};
 
 export function MedicationsList() {
   const { data, isLoading, error, refetch } = useApiMedicationOrdersList();
@@ -45,10 +52,10 @@ export function MedicationsList() {
     return frequency ? labels[frequency] : 'Not specified';
   };
 
-  const getMedicationStatus = (startDate: string, endDate?: string | null) => {
+  const getMedicationStatus = (startDate: string, endDate?: string | null): MedicationStatus => {
     const now = new Date();
-    const start = new Date(startDate);
-    const end = endDate ? new Date(endDate) : null;
+    const start = parseISO(startDate);
+    const end = endDate ? parseISO(endDate) : null;
 
     if (isBefore(now, start)) {
       return { status: 'scheduled', label: 'Scheduled', icon: Clock, variant: 'secondary' as const };
@@ -56,13 +63,8 @@ export function MedicationsList() {
     if (end && isAfter(now, end)) {
       return { status: 'completed', label: 'Completed', icon: CheckCircle, variant: 'outline' as const };
     }
-    if (end && isBefore(now, end)) {
-      return { status: 'active', label: 'Active', icon: CheckCircle, variant: 'default' as const };
-    }
-    if (!end) {
-      return { status: 'active', label: 'Active', icon: CheckCircle, variant: 'default' as const };
-    }
-    return { status: 'discontinued', label: 'Discontinued', icon: XCircle, variant: 'destructive' as const };
+    // Active state (started and not ended, or within date range)
+    return { status: 'active', label: 'Active', icon: CheckCircle, variant: 'default' as const };
   };
 
   return (
@@ -147,11 +149,11 @@ export function MedicationsList() {
                       </TableCell>
                       <TableCell>
                         <div className="text-sm">
-                          <div>{format(new Date(medication.start_date), 'MMM dd, yyyy')}</div>
+                          <div>{format(parseISO(medication.start_date), 'MMM dd, yyyy')}</div>
                           {medication.end_date && (
                             <>
                               <div className="text-gray-500">to</div>
-                              <div>{format(new Date(medication.end_date), 'MMM dd, yyyy')}</div>
+                              <div>{format(parseISO(medication.end_date), 'MMM dd, yyyy')}</div>
                             </>
                           )}
                         </div>
