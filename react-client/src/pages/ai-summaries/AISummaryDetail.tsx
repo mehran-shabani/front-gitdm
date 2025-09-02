@@ -101,7 +101,7 @@ export function AISummaryDetail() {
                 Generated summary for {summary.resource_type || 'medical content'}
               </CardDescription>
             </div>
-            <Badge variant="secondary">{summary.resource_type}</Badge>
+            <Badge variant="secondary">{summary.resource_type || 'Unknown'}</Badge>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
