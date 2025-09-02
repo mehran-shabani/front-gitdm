@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Setup axios interceptor
-  const setupAxiosInterceptor = (token: string) => {
+  const applyAuthHeader = (token: string) => {
     axiosClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   };
 
