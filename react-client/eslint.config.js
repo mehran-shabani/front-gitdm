@@ -24,7 +24,7 @@ export default tseslint.config([
       globals: globals.browser,
     },
     languageOptions: {
-      ecmaVersion: 2020,
+      ecmaVersion: 'latest',
       globals: globals.browser,
     },
   },
