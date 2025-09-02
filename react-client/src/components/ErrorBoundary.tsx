@@ -24,6 +24,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Uncaught error:', error, errorInfo);
+    // sendToMonitoring(error, errorInfo); // TODO: wire up
   }
 
   private handleReset = () => {
