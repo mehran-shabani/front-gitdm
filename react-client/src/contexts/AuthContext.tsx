@@ -121,7 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       const response = await refreshMutation.mutateAsync({
-        data: { refresh, access: '' },
+        data: { refresh },
       });
 
       const { access } = response.data;
