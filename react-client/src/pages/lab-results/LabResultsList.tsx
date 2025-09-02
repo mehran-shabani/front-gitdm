@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useApiLabResultsList } from '../../api/generated/gitdmApi';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/Table';
@@ -9,35 +10,21 @@ import { Eye, RefreshCw, Plus, FlaskConical, TrendingUp, TrendingDown } from 'lu
 import { Link } from 'react-router-dom';
 import { format, formatDistanceToNow, parseISO } from 'date-fns';
 
+// Helper function moved outside component for better performance
+const getValueStatus = (value: string): 'normal' | 'low' | 'high' => {
+  const numValue = parseFloat(value);
+  if (isNaN(numValue)) return 'normal';
+  // This is a simplified example - in real app, you'd compare against reference ranges
+  if (numValue < 0) return 'low';
+  if (numValue > 100) return 'high';
+  return 'normal';
+};
+
 export function LabResultsList() {
   const { data, isLoading, error, refetch } = useApiLabResultsList();
 
-  if (isLoading) {
-    return <Loading className="mt-8" size="lg" />;
-  }
-
-  if (error) {
-    return (
-      <ErrorMessage
-        title="Failed to load lab results"
-        message={error instanceof Error ? error.message : 'Unknown error'}
-        className="mt-8"
-      />
-    );
-  }
-
-  const results = data?.data || [];
-
-  const getValueStatus = (value: string) => {
-    const numValue = parseFloat(value);
-    if (isNaN(numValue)) return 'normal';
-    // This is a simplified example - in real app, you'd compare against reference ranges
-    if (numValue < 0) return 'low';
-    if (numValue > 100) return 'high';
-    return 'normal';
-  };
-
-  const getStatusBadge = (status: string) => {
+  // Memoized function to prevent recreation on each render
+  const getStatusBadge = useCallback((status: string) => {
     switch (status) {
       case 'high':
         return (
@@ -56,7 +43,23 @@ export function LabResultsList() {
       default:
         return <Badge variant="outline">Normal</Badge>;
     }
-  };
+  }, []);
+
+  if (isLoading) {
+    return <Loading className="mt-8" size="lg" />;
+  }
+
+  if (error) {
+    return (
+      <ErrorMessage
+        title="Failed to load lab results"
+        message={error instanceof Error ? error.message : 'Unknown error'}
+        className="mt-8"
+      />
+    );
+  }
+
+  const results = data?.data || [];
 
   return (
     <div className="space-y-6">
