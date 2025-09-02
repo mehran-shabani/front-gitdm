@@ -46,16 +46,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Setup response interceptor for token refresh
   useEffect(() => {
+    // dedupe concurrent refresh calls
+    let refreshPromise: Promise<void> | null = null;
+    const ensureSingleRefresh = () => {
+      if (!refreshPromise) {
+        refreshPromise = refreshToken().finally(() => {
+          refreshPromise = null;
+        });
+      }
+      return refreshPromise;
+    };
+
     const interceptor = axiosClient.interceptors.response.use(
       (response) => response,
       async (error) => {
-        const originalRequest = error.config;
+        const originalRequest = error.config as { _retry?: boolean; url?: string };
+        if (!originalRequest) return Promise.reject(error);
+        // مهم: روی خود درخواست رفرش دخالت نکن تا لوپ نشه
+        if (originalRequest.url && /token\/refresh/i.test(originalRequest.url)) {
+          return Promise.reject(error);
+        }
 
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
 
           try {
-            await refreshToken();
+            await ensureSingleRefresh();
             return axiosClient(originalRequest);
           } catch (refreshError) {
             logout();
