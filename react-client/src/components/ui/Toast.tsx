@@ -71,6 +71,9 @@ export function ToastItem({ toast, onClose }: ToastProps) {
           ? 'translate-x-0 opacity-100'
           : 'translate-x-full opacity-0'
       )}
+      role={toast.type === 'error' || toast.type === 'warning' ? 'alert' : 'status'}
+      aria-live={toast.type === 'error' || toast.type === 'warning' ? 'assertive' : 'polite'}
+      aria-atomic="true"
     >
       <div className="flex items-start p-4">
         <Icon className={cn('h-5 w-5 flex-shrink-0', iconStyles[toast.type])} />
