@@ -6,7 +6,7 @@ This app was scaffolded with Vite (React + TypeScript) and configured to generat
 
 - `orval.config.ts`: Orval configuration reading `../OpenAPI.yml` and generating to `src/api/generated` using an axios mutator.
 - `src/api/http/axios-instance.ts`: Central axios client and Orval-compatible mutator (`createAxiosInstance<T>`).
-- `src/api/generated/`: Auto-generated services and schemas (do not edit).
+- `src/api/generated/`: Auto-generated services and types (do not edit).
 - `src/main.tsx`: App entry with `QueryClientProvider` and React Query Devtools.
 - `.env.example`: Declare `VITE_API_BASE_URL` for axios base URL.
 
