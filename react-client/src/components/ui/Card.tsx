@@ -1,7 +1,9 @@
 import { HTMLAttributes, forwardRef } from 'react';
 import { cn } from '../../lib/utils';
 
-export interface CardProps extends HTMLAttributes<HTMLDivElement> {}
+import type { ComponentPropsWithoutRef } from 'react';
+
+export type CardProps = ComponentPropsWithoutRef<'div'>;
 
 const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ className, ...props }, ref) => (
