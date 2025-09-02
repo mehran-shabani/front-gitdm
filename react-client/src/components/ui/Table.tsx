@@ -1,8 +1,6 @@
-import { HTMLAttributes, TdHTMLAttributes, ThHTMLAttributes, forwardRef } from 'react';
+import { HTMLAttributes, TdHTMLAttributes, ThHTMLAttributes, forwardRef, ComponentPropsWithoutRef } from 'react';
 import { cn } from '../../lib/utils';
 
-const Table = forwardRef<HTMLTableElement, HTMLAttributes<HTMLTableElement>>(
-  ({ className, ...props }, ref) => (
 // Add a new props type to allow controlling scroll behavior and container classes
 type TableProps = ComponentPropsWithoutRef<'table'> & {
   /** Whether to apply `overflow-auto` on the wrapper (default: true) */
@@ -30,7 +28,6 @@ const Table = forwardRef<HTMLTableElement, TableProps>(
       />
     </div>
   )
-);
 );
 Table.displayName = 'Table';
 
@@ -60,7 +57,7 @@ const TableFooter = forwardRef<
 >(({ className, ...props }, ref) => (
   <tfoot
     ref={ref}
-    className={cn('bg-gray-100 font-medium [&>tr]:last:border-b-0', className)}
+    className={cn('bg-gray-100 dark:bg-gray-800 font-medium [&>tr]:last:border-b-0', className)}
     {...props}
   />
 ));
@@ -73,7 +70,7 @@ const TableRow = forwardRef<
   <tr
     ref={ref}
     className={cn(
-      'border-b transition-colors hover:bg-gray-100/50 data-[state=selected]:bg-gray-100',
+      'border-b transition-colors hover:bg-gray-100/50 dark:hover:bg-gray-800/50 data-[state=selected]:bg-gray-100 dark:data-[state=selected]:bg-gray-800',
       className
     )}
     {...props}
@@ -88,7 +85,7 @@ const TableHead = forwardRef<
   <th
     ref={ref}
     className={cn(
-      'h-12 px-4 text-left align-middle font-medium text-gray-500 [&:has([role=checkbox])]:pr-0',
+      'h-12 px-4 text-left align-middle font-medium text-gray-500 dark:text-gray-400 [&:has([role=checkbox])]:pr-0',
       className
     )}
     {...props}
@@ -114,7 +111,7 @@ const TableCaption = forwardRef<
 >(({ className, ...props }, ref) => (
   <caption
     ref={ref}
-    className={cn('mt-4 text-sm text-gray-500', className)}
+    className={cn('mt-4 text-sm text-gray-500 dark:text-gray-400', className)}
     {...props}
   />
 ));

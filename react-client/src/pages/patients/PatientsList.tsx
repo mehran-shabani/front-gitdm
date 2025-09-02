@@ -1,4 +1,5 @@
 import { useApiPatientsList } from '../../api/generated/gitdmApi';
+import { SexEnum } from '../../api/generated/gitdmApi.schemas';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/Table';
 import { Badge } from '../../components/ui/Badge';
@@ -30,19 +31,20 @@ export function PatientsList() {
       />
     );
   }
-  }
 
   const patients = data?.data || [];
 
-  const getSexBadgeVariant = (sex?: string | null) => {
-    switch (sex) {
-      case 'MALE':
-        return 'default';
-      case 'FEMALE':
-        return 'secondary';
-      default:
-        return 'outline';
-    }
+  // Typed lookup map for sex badge variants
+  const sexBadgeVariants: Record<SexEnum, 'default' | 'secondary' | 'outline'> = {
+    [SexEnum.MALE]: 'default',
+    [SexEnum.FEMALE]: 'secondary',
+    [SexEnum.OTHER]: 'outline',
+  } as const;
+
+  const getSexBadgeVariant = (sex?: string | null): 'default' | 'secondary' | 'outline' => {
+    return sex && sex in sexBadgeVariants 
+      ? sexBadgeVariants[sex as SexEnum]
+      : 'outline';
   };
 
   return (
