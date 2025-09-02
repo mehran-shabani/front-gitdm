@@ -8,6 +8,7 @@ import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { Eye, RefreshCw, Plus, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
+import { getErrorMessage } from '../../lib/utils';
 
 export function AISummariesList() {
   const { data, isLoading, error, refetch, isFetching } = useApiAiSummariesList();
@@ -20,13 +21,13 @@ export function AISummariesList() {
     return (
       <ErrorMessage
         title="Failed to load AI summaries"
-        message={error.message}
+        message={getErrorMessage(error, 'An unexpected error occurred')}
         className="mt-8"
       />
     );
   }
 
-  const summaries = data?.data || [];
+    const summaries = data || [];
 
   // Safe date formatting with fallback
   const formatDate = (dateString: string | null | undefined) => {

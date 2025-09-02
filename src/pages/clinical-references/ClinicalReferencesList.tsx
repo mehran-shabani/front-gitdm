@@ -8,6 +8,7 @@ import { Loading } from '../../components/ui/Loading';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { Eye, RefreshCw, Plus, BookOpen, ExternalLink, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import type { AxiosError } from 'axios';
 
 export function ClinicalReferencesList() {
   const { data, isLoading, error, refetch } = useApiRefsList();
@@ -18,9 +19,9 @@ export function ClinicalReferencesList() {
 
   if (error) {
     // Enhanced error handling
-    const errorMessage = (error as any)?.response?.data?.detail || 
-                        (error as any)?.response?.data?.message || 
-                        error.message || 
+    const errorMessage = (error as AxiosError<{ detail?: string; message?: string }>)?.response?.data?.detail || 
+                        (error as AxiosError<{ detail?: string; message?: string }>)?.response?.data?.message || 
+                        (error as AxiosError<{ detail?: string; message?: string }>)?.message || 
                         'An unexpected error occurred';
     return (
       <ErrorMessage
@@ -31,7 +32,7 @@ export function ClinicalReferencesList() {
     );
   }
 
-  const references = data?.data || [];
+  const references = data || [];
 
   // Improved year validation with type safety
   const getYearBadgeVariant = (year: number | string | null | undefined): 'default' | 'secondary' | 'outline' => {

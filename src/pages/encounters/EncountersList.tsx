@@ -7,7 +7,10 @@ import { Loading } from '../../components/ui/Loading';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { Eye, RefreshCw, Plus, Calendar, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getErrorMessage } from '../../lib/utils';
 import { format, formatDistanceToNow, parseISO } from 'date-fns';
+import type { Encounter } from '../../api/generated/gitdmApi.schemas';
+
 
 export function EncountersList() {
   const { data, isLoading, error, refetch } = useApiEncountersList();
@@ -20,13 +23,13 @@ export function EncountersList() {
     return (
       <ErrorMessage
         title="Failed to load encounters"
-        message={error instanceof Error ? error.message : 'Unknown error'}
+        message={getErrorMessage(error, 'Unknown error')}
         className="mt-8"
       />
     );
   }
 
-  const encounters = data?.data || [];
+  const encounters = data || [];
 
   const truncateText = (text?: string, maxLength = 100) => {
     if (!text) return '';
@@ -82,7 +85,7 @@ export function EncountersList() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {encounters.map((encounter) => (
+                {encounters.map((encounter: Encounter) => (
                   <TableRow key={encounter.id}>
                     <TableCell className="font-medium">{encounter.id}</TableCell>
                     <TableCell>

@@ -9,7 +9,9 @@ import { Eye, RefreshCw, Plus, FlaskConical, TrendingUp, TrendingDown } from 'lu
 import { Link } from 'react-router-dom';
 import { format, formatDistanceToNow, parseISO } from 'date-fns';
 import { useApiLabsList } from '../../api/generated/gitdmApi';
+import { getErrorMessage } from '../../lib/utils';
 import type { LabResult } from '../../api/generated/gitdmApi.schemas';
+
 
 // Helper function moved outside component for better performance
 const getValueStatus = (value: string): 'normal' | 'low' | 'high' => {
@@ -54,13 +56,13 @@ export function LabResultsList() {
     return (
       <ErrorMessage
         title="Failed to load lab results"
-        message={error instanceof Error ? error.message : 'Unknown error'}
+        message={getErrorMessage(error, 'Failed to load lab results')}
         className="mt-8"
       />
     );
   }
 
-  const results = data?.data || [];
+  const results = data || [];
 
   return (
     <div className="space-y-6">

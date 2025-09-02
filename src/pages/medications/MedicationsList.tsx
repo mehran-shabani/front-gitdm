@@ -1,4 +1,5 @@
 import { useApiMedsList } from '../../api/generated/gitdmApi';
+import { getErrorMessage } from '../../lib/utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/Table';
 import { Badge } from '../../components/ui/Badge';
@@ -28,13 +29,13 @@ export function MedicationsList() {
     return (
       <ErrorMessage
         title="Failed to load medications"
-        message={error instanceof Error ? error.message : 'Unknown error'}
+        message={getErrorMessage(error, 'Unknown error')}
         className="mt-8"
       />
     );
   }
 
-  const medications = data?.data || [];
+  const medications = data || [];
 
   const getFrequencyLabel = (frequency?: FrequencyEnum) => {
     const labels: Record<FrequencyEnum, string> = {

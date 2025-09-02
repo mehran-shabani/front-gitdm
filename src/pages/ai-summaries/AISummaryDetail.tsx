@@ -8,6 +8,7 @@ import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { ArrowLeft, Edit, Trash2, RefreshCw, FileText, User, Calendar, ExternalLink } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '../../hooks/useToast';
+import { getErrorMessage } from '../../lib/utils';
 
 export function AISummaryDetail() {
   const { id } = useParams<{ id: string }>();
@@ -44,13 +45,13 @@ export function AISummaryDetail() {
     return (
       <ErrorMessage
         title="Failed to load AI summary"
-        message={error?.message || 'AI summary not found'}
+        message={getErrorMessage(error, 'AI summary not found')}
         className="mt-8"
       />
     );
   }
 
-  const summary = data.data;
+  const summary = data;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">

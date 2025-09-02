@@ -103,7 +103,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data: { email, password },
       });
 
-      const { access, refresh } = response.data;
+      const { access, refresh } = response;
       
       localStorage.setItem(ACCESS_TOKEN_KEY, access);
       localStorage.setItem(REFRESH_TOKEN_KEY, refresh);
@@ -147,7 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data: { refresh },
       });
 
-      const { access } = response.data;
+      const { access } = response;
       
       localStorage.setItem(ACCESS_TOKEN_KEY, access);
       applyAuthHeader(access);

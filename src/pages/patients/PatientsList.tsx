@@ -1,5 +1,6 @@
 import { useApiPatientsList } from '../../api/generated/gitdmApi';
-import { SexEnum } from '../../api/generated/gitdmApi.schemas';
+import { SexEnum, type Patient } from '../../api/generated/gitdmApi.schemas';
+import { getErrorMessage } from '../../lib/utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/Table';
 import { Badge } from '../../components/ui/Badge';
@@ -18,21 +19,16 @@ export function PatientsList() {
   }
 
   if (error) {
-    const axiosErr = error as any;
-    const errorMsg =
-      axiosErr?.response?.data?.message ||
-      axiosErr?.message ||
-      'Unexpected error';
     return (
       <ErrorMessage
         title="Failed to load patients"
-        message={errorMsg}
+        message={getErrorMessage(error, 'Unexpected error')}
         className="mt-8"
       />
     );
   }
 
-  const patients = data?.data || [];
+  const patients = data || [];
 
   // Typed lookup map for sex badge variants
   const sexBadgeVariants: Record<SexEnum, 'default' | 'secondary' | 'outline'> = {
@@ -96,7 +92,7 @@ export function PatientsList() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {patients.map((patient) => (
+                {patients.map((patient: Patient) => (
                   <TableRow key={patient.id}>
                     <TableCell className="font-medium">{patient.id}</TableCell>
                     <TableCell>
