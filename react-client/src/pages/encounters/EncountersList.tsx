@@ -141,9 +141,10 @@ export function EncountersList() {
                     </TableCell>
                     <TableCell className="text-right">
                       <Link to={`/encounters/${encounter.id}`}>
-                        <Button variant="ghost" size="sm">
+                        <Button variant="ghost" size="sm" aria-label={`View encounter ${encounter.id}`} type="button">
                           <Eye className="h-4 w-4" />
                         </Button>
+                      </Link>
                       </Link>
                     </TableCell>
                   </TableRow>
