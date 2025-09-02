@@ -3,7 +3,26 @@ import { cn } from '../../lib/utils';
 
 const Table = forwardRef<HTMLTableElement, HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
-    <div className="relative w-full overflow-auto">
+// Add a new props type to allow controlling scroll behavior and container classes
+type TableProps = ComponentPropsWithoutRef<'table'> & {
+  /** Whether to apply `overflow-auto` on the wrapper (default: true) */
+  scroll?: boolean;
+  /** Additional classes for the outer container */
+  containerClassName?: string;
+};
+
+const Table = forwardRef<HTMLTableElement, TableProps>(
+  (
+    { className, scroll = true, containerClassName, ...props },
+    ref
+  ) => (
+    <div
+      className={cn(
+        'relative w-full',
+        scroll && 'overflow-auto',
+        containerClassName
+      )}
+    >
       <table
         ref={ref}
         className={cn('w-full caption-bottom text-sm', className)}
@@ -11,6 +30,7 @@ const Table = forwardRef<HTMLTableElement, HTMLAttributes<HTMLTableElement>>(
       />
     </div>
   )
+);
 );
 Table.displayName = 'Table';
 
