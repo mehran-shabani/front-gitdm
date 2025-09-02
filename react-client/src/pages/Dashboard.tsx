@@ -125,7 +125,7 @@ export function Dashboard() {
         <h2 className="text-2xl font-bold mb-6">Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature) => (
-            <Link key={feature.href} to={feature.href}>
+            <Link key={feature.href} to={feature.href} aria-label={`Open ${feature.title}`}>
               <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
                 <CardHeader>
                   <div className={`inline-flex p-3 rounded-lg ${feature.bgColor} mb-4`}>
