@@ -51,7 +51,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </div>
             </CardHeader>
             <CardContent>
-              {this.state.error && (
+              {process.env.NODE_ENV !== 'production' && this.state.error && (
                 <div className="mb-4 p-4 bg-gray-50 rounded-lg">
                   <p className="text-sm font-medium text-gray-900 mb-1">
                     Error details:
@@ -60,6 +60,7 @@ export class ErrorBoundary extends Component<Props, State> {
                     {this.state.error.message}
                   </p>
                 </div>
+              )}
               )}
               <Button onClick={this.handleReset} className="w-full">
                 <RefreshCw className="h-4 w-4 mr-2" />
