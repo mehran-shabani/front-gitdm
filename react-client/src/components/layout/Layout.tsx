@@ -134,7 +134,10 @@ export function Layout({ children }: LayoutProps) {
           </Button>
           <div className="flex-1">
             <h2 className="text-lg font-semibold text-gray-900">
-              {navigation.find((item) => item.href === location.pathname)?.name || 'Dashboard'}
+              {navigation.find(
+                (item) =>
+                  item.href === location.pathname || location.pathname.startsWith(item.href + '/')
+              )?.name || 'Dashboard'}
             </h2>
           </div>
         </header>
