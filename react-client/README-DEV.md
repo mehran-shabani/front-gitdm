@@ -1,4 +1,4 @@
-## React API Client: Generated from OpenAPI
+# React API Client: Generated from OpenAPI
 
 This app was scaffolded with Vite (React + TypeScript) and configured to generate a fully typed API client from the root `OpenAPI.yml` using Orval. It exposes axios-based services and is ready to layer React Query hooks and UI screens.
 
