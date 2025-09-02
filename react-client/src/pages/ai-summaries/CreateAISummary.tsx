@@ -75,7 +75,7 @@ export function CreateAISummary() {
 
     try {
       // Build payload with only non-empty fields
-      const payload: any = {
+      const payload: Partial<CreateAISummary> = {
         patient_id: patientId,
         content: trimmedContent,
         summary_type: formData.summary_type,
@@ -95,7 +95,6 @@ export function CreateAISummary() {
       if (formData.topic_hint?.trim()) {
         payload.topic_hint = formData.topic_hint.trim();
       }
-
       await createMutation.mutateAsync({ data: payload });
 
       addToast('success', 'AI Summary Created', 'The AI summary has been created successfully.');
