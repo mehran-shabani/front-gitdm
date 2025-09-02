@@ -17,13 +17,19 @@ export function PatientsList() {
   }
 
   if (error) {
+    const axiosErr = error as any;
+    const errorMsg =
+      axiosErr?.response?.data?.message ||
+      axiosErr?.message ||
+      'Unexpected error';
     return (
       <ErrorMessage
         title="Failed to load patients"
-        message={error.message}
+        message={errorMsg}
         className="mt-8"
       />
     );
+  }
   }
 
   const patients = data?.data || [];
