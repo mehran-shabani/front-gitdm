@@ -21,13 +21,14 @@ This app was scaffolded with Vite (React + TypeScript) and configured to generat
 
 Copy `.env.example` to `.env` and set your API base URL:
 
-```
+```dotenv
 VITE_API_BASE_URL=http://localhost:3000
+VITE_API_WITH_CREDENTIALS=false
 ```
 
 ### Using the generated client
 
-The generator created axios-powered functions in `src/api/generated/gitdmApi.ts`. Each function returns the response data directly (mutator unwraps `AxiosResponse`). Example usage in a component:
+The generator created axios-powered functions and React Query hooks in `src/api/generated/gitdmApi.ts`. The mutator unwraps `AxiosResponse` so functions return data directly.
 
 ```tsx
 import { useQuery } from '@tanstack/react-query';
@@ -46,7 +47,7 @@ export function Example() {
 }
 ```
 
-Note: Current config generates services only. If you want Orval to also emit ready-to-use React Query hooks (e.g., `useApiAiSummariesList`), update `orval.config.ts` to use `output.client: 'react-query'` and set `useQuery`/`useMutation` overrides accordingly. The axios mutator will still work.
+Note: If you prefer Orval to emit only services (no hooks), change `client` back to `'axios'` in `orval.config.ts`. The axios mutator will still work.
 
 ### Conventions & next steps
 
@@ -56,19 +57,19 @@ Note: Current config generates services only. If you want Orval to also emit rea
 - Introduce a lightweight UI library (e.g., Mantine, MUI, or Tailwind) and build minimal resource screens:
   - List + detail for each top-level resource found in `OpenAPI.yml` (e.g., AI summaries, patients, encounters, etc.).
   - CRUD forms driven by generated types.
-- Add auth token retrieval in `axios-instance.ts` by wiring `getAuthToken` or by injecting an interceptor based on your auth flow.
+- Add auth token retrieval in `axios-instance.ts` by wiring an interceptor based on your auth flow.
 
 ### Troubleshooting
 
 - If types fail with `verbatimModuleSyntax`, ensure type-only imports are used where needed.
-- If Orval warns about `import.meta`, ignore: build-time bundlers provide it; Orval just parses files.
-- If peer dependency warnings appear for React Query on React 19, installs use `--legacy-peer-deps` for now.
+- If Orval warns about `import.meta`, it is safe to ignore.
+- If peer dependency warnings appear for React Query on React 19, use `--legacy-peer-deps` temporarily.
 
 ### Regeneration notes
 
 Do not edit files under `src/api/generated`. Regenerate after any change to `OpenAPI.yml`:
 
-```
+```bash
 npm run api:generate
 ```
 
