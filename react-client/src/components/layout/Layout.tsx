@@ -64,11 +64,22 @@ export function Layout({ children }: LayoutProps) {
       />
       
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="app-sidebar-title"
         className={cn(
           'fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-xl transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-0',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
+        <div className="flex items-center justify-between p-4">
+          <h1 id="app-sidebar-title" className="text-xl font-bold text-gray-900">
+            GITDM Client
+          </h1>
+          {/* …rest of the header content… */}
+        </div>
+        {/* …rest of the sidebar… */}
+      </div>
         <div className="flex h-16 items-center justify-between px-6 lg:justify-center">
           <h1 className="text-xl font-bold text-gray-900">GITDM Client</h1>
           <Button
