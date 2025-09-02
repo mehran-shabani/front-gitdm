@@ -189,9 +189,30 @@ export function CreateAISummary() {
                 onChange={handleChange}
                 placeholder="Enter the medical content to be summarized..."
                 rows={6}
-                minLength={10}
-                maxLength={10000}
-                required
+// At the top of CreateAISummary.tsx, after imports:
+const CONTENT_MAX_LENGTH = 10000;
+const CONTENT_MIN_LENGTH = 10;
+
+// … later in your validation logic (around the existing `trimmedContent` checks):
+-    } else if (trimmedContent.length > 10000) {
+    } else if (trimmedContent.length > CONTENT_MAX_LENGTH) {
+      newErrors.content = `Content must not exceed ${CONTENT_MAX_LENGTH.toLocaleString()} characters`;
+
+// … and in the JSX where you render the textarea (around lines 191–193):
+               <Textarea
+                 id="content"
+                 name="content"
+                 value={formData.content}
+                 onChange={handleChange}
+                 placeholder="Enter the medical content to be summarized..."
+                 rows={6}
+-                minLength={10}
+                minLength={CONTENT_MIN_LENGTH}
+                maxLength={CONTENT_MAX_LENGTH}
+                 required
+                 aria-invalid={!!errors.content}
+                 aria-describedby={errors.content ? 'content-error' : undefined}
+               />
                 aria-required="true"
                 aria-invalid={!!errors.content}
                 aria-describedby={errors.content ? "content-error" : undefined}
