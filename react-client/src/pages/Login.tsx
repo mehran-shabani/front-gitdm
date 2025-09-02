@@ -112,9 +112,18 @@ import { isAxiosError } from 'axios';
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="••••••••"
+                required
+                aria-invalid={!!errors.password}
+                aria-describedby={errors.password ? 'password-error' : undefined}
               />
               {errors.password && (
-                <p className="text-sm text-red-500">{errors.password}</p>
+                <p
+                  id="password-error"
+                  role="alert"
+                  className="text-sm text-red-500"
+                >
+                  {errors.password}
+                </p>
               )}
             </div>
 
