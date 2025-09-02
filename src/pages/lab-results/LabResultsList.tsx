@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { useApiLabResultsList } from '../../api/generated/gitdmApi';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/Table';
 import { Badge } from '../../components/ui/Badge';
@@ -9,6 +8,8 @@ import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { Eye, RefreshCw, Plus, FlaskConical, TrendingUp, TrendingDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { format, formatDistanceToNow, parseISO } from 'date-fns';
+import { useApiLabsList } from '../../api/generated/gitdmApi';
+import type { LabResult } from '../../api/generated/gitdmApi.schemas';
 
 // Helper function moved outside component for better performance
 const getValueStatus = (value: string): 'normal' | 'low' | 'high' => {
@@ -21,7 +22,7 @@ const getValueStatus = (value: string): 'normal' | 'low' | 'high' => {
 };
 
 export function LabResultsList() {
-  const { data, isLoading, error, refetch } = useApiLabResultsList();
+  const { data, isLoading, error, refetch } = useApiLabsList();
 
   // Memoized function to prevent recreation on each render
   const getStatusBadge = useCallback((status: string) => {
@@ -111,7 +112,7 @@ export function LabResultsList() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {results.map((result) => (
+                {results.map((result: LabResult) => (
                   <TableRow key={result.id}>
                     <TableCell className="font-medium">{result.id}</TableCell>
                     <TableCell>

@@ -1,4 +1,5 @@
-import { ReactNode, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   FileText,
@@ -60,7 +61,7 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Mobile sidebar */}
+      {/* Mobile sidebar backdrop */}
       <div
         role="button"
         aria-label="Close sidebar"
@@ -72,11 +73,12 @@ export function Layout({ children }: LayoutProps) {
         onClick={() => setSidebarOpen(false)}
         onKeyDown={(e) => {
           if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
-            setSidebarOpen(false)
+            setSidebarOpen(false);
           }
         }}
       />
       
+      {/* Sidebar */}
       <div
         role="dialog"
         aria-modal="true"
@@ -86,16 +88,8 @@ export function Layout({ children }: LayoutProps) {
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <div className="flex items-center justify-between p-4">
-          <h1 id="app-sidebar-title" className="text-xl font-bold text-gray-900">
-            GITDM Client
-          </h1>
-          {/* …rest of the header content… */}
-        </div>
-        {/* …rest of the sidebar… */}
-      </div>
         <div className="flex h-16 items-center justify-between px-6 lg:justify-center">
-          <h1 className="text-xl font-bold text-gray-900">GITDM Client</h1>
+          <h1 id="app-sidebar-title" className="text-xl font-bold text-gray-900">GITDM Client</h1>
           <Button
             variant="ghost"
             size="icon"

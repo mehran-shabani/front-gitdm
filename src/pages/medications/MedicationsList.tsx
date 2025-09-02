@@ -1,4 +1,4 @@
-import { useApiMedicationOrdersList } from '../../api/generated/gitdmApi';
+import { useApiMedsList } from '../../api/generated/gitdmApi';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/Table';
 import { Badge } from '../../components/ui/Badge';
@@ -8,7 +8,7 @@ import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { Eye, RefreshCw, Plus, Pill, Clock, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { format, isBefore, isAfter, parseISO } from 'date-fns';
-import { FrequencyEnum } from '../../api/generated/gitdmApi.schemas';
+import type { FrequencyEnum, MedicationOrder } from '../../api/generated/gitdmApi.schemas';
 
 type MedicationStatus = {
   status: 'scheduled' | 'active' | 'completed';
@@ -18,7 +18,7 @@ type MedicationStatus = {
 };
 
 export function MedicationsList() {
-  const { data, isLoading, error, refetch } = useApiMedicationOrdersList();
+  const { data, isLoading, error, refetch } = useApiMedsList();
 
   if (isLoading) {
     return <Loading className="mt-8" size="lg" />;
@@ -117,7 +117,7 @@ export function MedicationsList() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {medications.map((medication) => {
+                {medications.map((medication: MedicationOrder) => {
                   const status = getMedicationStatus(medication.start_date, medication.end_date);
                   return (
                     <TableRow key={medication.id}>

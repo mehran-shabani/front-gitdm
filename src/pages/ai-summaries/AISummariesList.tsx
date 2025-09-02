@@ -132,17 +132,17 @@ export function AISummariesList() {
                       {formatDate(summary.updated_at)}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        aria-label={`View summary ${summary.id}`}
-                        asChild
-                      >
-                        <Link to={`/ai-summaries/${summary.id}`}>
+                      <Link to={`/ai-summaries/${summary.id}`}>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          aria-label={`View summary ${summary.id}`}
+                        >
                           <Eye className="h-4 w-4" />
                           <span className="sr-only">View summary</span>
-                        </Link>
-                      </Button>
+                        </Button>
+                      </Link>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

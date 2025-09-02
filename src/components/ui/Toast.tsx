@@ -115,10 +115,10 @@ export function ToastItem({ toast, onClose }: ToastProps) {
           ? 'translate-x-0 opacity-100'
           : 'translate-x-full opacity-0'
       )}
-      role={toast.type === 'error' || toast.type === 'warning' ? 'alert' : 'status'}
-      aria-live={toast.type === 'error' || toast.type === 'warning' ? 'assertive' : 'polite'}
+      role="alert"
+      aria-live="polite"
       aria-atomic="true"
-      aria-hidden={!isVisible}
+      aria-hidden={!isVisible ? 'true' : 'false'}
       tabIndex={isVisible ? 0 : -1}
       onMouseEnter={handlePause}
       onMouseLeave={handleResume}

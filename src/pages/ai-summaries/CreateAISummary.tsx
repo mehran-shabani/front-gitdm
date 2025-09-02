@@ -10,8 +10,12 @@ import { Select } from '../../components/ui/Select';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';
-import { SummaryTypeEnum } from '../../api/generated/gitdmApi.schemas';
+import type { CreateAISummary, SummaryTypeEnum } from '../../api/generated/gitdmApi.schemas';
 import { Link } from 'react-router-dom';
+
+// Constants
+const CONTENT_MAX_LENGTH = 10000;
+const CONTENT_MIN_LENGTH = 10;
 
 // Type-safe form state interface
 interface FormState {
@@ -23,6 +27,7 @@ interface FormState {
   summary_type: SummaryTypeEnum;
   topic_hint?: string;
   async_processing: boolean;
+  errors: Record<string, string>;
 }
 
 export function CreateAISummary() {
@@ -39,6 +44,7 @@ export function CreateAISummary() {
     summary_type: 'medical_record' as SummaryTypeEnum,
     topic_hint: '',
     async_processing: false,
+    errors: {},
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -64,10 +70,10 @@ export function CreateAISummary() {
     const trimmedContent = formData.content.trim();
     if (!trimmedContent) {
       newErrors.content = 'Content is required';
-    } else if (trimmedContent.length < 10) {
-      newErrors.content = 'Content must be at least 10 characters';
-    } else if (trimmedContent.length > 10000) {
-      newErrors.content = 'Content must not exceed 10,000 characters';
+    } else if (trimmedContent.length < CONTENT_MIN_LENGTH) {
+      newErrors.content = `Content must be at least ${CONTENT_MIN_LENGTH} characters`;
+    } else if (trimmedContent.length > CONTENT_MAX_LENGTH) {
+      newErrors.content = `Content must not exceed ${CONTENT_MAX_LENGTH.toLocaleString()} characters`;
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -78,7 +84,7 @@ export function CreateAISummary() {
     try {
       // Build payload with only non-empty fields
       const payload: Partial<CreateAISummary> = {
-        patient_id: patientId,
+        patient_id: parseInt(formData.patient_id, 10),
         content: trimmedContent,
         summary_type: formData.summary_type,
         async_processing: formData.async_processing,
@@ -97,7 +103,7 @@ export function CreateAISummary() {
       if (formData.topic_hint?.trim()) {
         payload.topic_hint = formData.topic_hint.trim();
       }
-      await createMutation.mutateAsync({ data: payload });
+      await createMutation.mutateAsync({ data: payload as CreateAISummary });
 
       addToast('success', 'AI Summary Created', 'The AI summary has been created successfully.');
       navigate('/ai-summaries');
@@ -189,39 +195,17 @@ export function CreateAISummary() {
                 onChange={handleChange}
                 placeholder="Enter the medical content to be summarized..."
                 rows={6}
-// At the top of CreateAISummary.tsx, after imports:
-const CONTENT_MAX_LENGTH = 10000;
-const CONTENT_MIN_LENGTH = 10;
-
-// … later in your validation logic (around the existing `trimmedContent` checks):
--    } else if (trimmedContent.length > 10000) {
-    } else if (trimmedContent.length > CONTENT_MAX_LENGTH) {
-      newErrors.content = `Content must not exceed ${CONTENT_MAX_LENGTH.toLocaleString()} characters`;
-
-// … and in the JSX where you render the textarea (around lines 191–193):
-               <Textarea
-                 id="content"
-                 name="content"
-                 value={formData.content}
-                 onChange={handleChange}
-                 placeholder="Enter the medical content to be summarized..."
-                 rows={6}
--                minLength={10}
                 minLength={CONTENT_MIN_LENGTH}
                 maxLength={CONTENT_MAX_LENGTH}
-                 required
-                 aria-invalid={!!errors.content}
-                 aria-describedby={errors.content ? 'content-error' : undefined}
-               />
-                aria-required="true"
+                required
                 aria-invalid={!!errors.content}
-                aria-describedby={errors.content ? "content-error" : undefined}
+                aria-describedby={errors.content ? 'content-error' : undefined}
               />
               {errors.content && (
                 <p id="content-error" className="text-sm text-red-500">{errors.content}</p>
               )}
               <p className="text-sm text-gray-500">
-                {formData.content.length}/10,000 characters
+                {formData.content.length}/{CONTENT_MAX_LENGTH.toLocaleString()} characters
               </p>
             </div>
 
@@ -266,13 +250,15 @@ const CONTENT_MIN_LENGTH = 10;
             </div>
 
             <div className="flex items-center space-x-2">
-              <input
+              <Input
                 type="checkbox"
                 id="async_processing"
                 name="async_processing"
                 checked={formData.async_processing}
                 onChange={handleChange}
                 className="h-4 w-4 rounded border-gray-300"
+                aria-invalid={!!errors.async_processing}
+                aria-describedby={errors.async_processing ? 'async-processing-error' : undefined}
               />
               <Label htmlFor="async_processing">
                 Process asynchronously (recommended for large content)

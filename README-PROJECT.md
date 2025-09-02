@@ -157,7 +157,7 @@ The application uses JWT-based authentication:
 
 Demo credentials (if available):
 
-- Email: admin@example.com
+- Email: <admin@example.com>
 - Password: password
 
 ## 🎨 UI Components

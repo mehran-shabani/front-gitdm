@@ -2,7 +2,7 @@
 
 This app was scaffolded with Vite (React + TypeScript) and configured to generate a fully typed API client from the root `OpenAPI.yml` using Orval. It exposes axios-based services and is ready to layer React Query hooks and UI screens.
 
-### Structure
+## Structure
 
 - `orval.config.ts`: Orval configuration reading `../OpenAPI.yml` and generating to `src/api/generated` using an axios mutator.
 - `src/api/http/axios-instance.ts`: Central axios client and Orval-compatible mutator (`createAxiosInstance<T>`).
@@ -72,4 +72,3 @@ Do not edit files under `src/api/generated`. Regenerate after any change to `Ope
 ```bash
 npm run api:generate
 ```
-

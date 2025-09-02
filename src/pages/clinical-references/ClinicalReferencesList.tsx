@@ -1,4 +1,5 @@
-import { useApiClinicalReferencesList } from '../../api/generated/gitdmApi';
+import { useApiRefsList } from '../../api/generated/gitdmApi';
+import type { ClinicalReference } from '../../api/generated/gitdmApi.schemas';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/Table';
 import { Badge } from '../../components/ui/Badge';
@@ -9,7 +10,7 @@ import { Eye, RefreshCw, Plus, BookOpen, ExternalLink, Calendar } from 'lucide-r
 import { Link } from 'react-router-dom';
 
 export function ClinicalReferencesList() {
-  const { data, isLoading, error, refetch } = useApiClinicalReferencesList();
+  const { data, isLoading, error, refetch } = useApiRefsList();
 
   if (isLoading) {
     return <Loading className="mt-8" size="lg" />;
@@ -57,7 +58,7 @@ export function ClinicalReferencesList() {
   };
 
   // Get display title with fallback
-  const getDisplayTitle = (reference: any) => {
+  const getDisplayTitle = (reference: ClinicalReference) => {
     return reference.title || `Reference ${reference.id}`;
   };
 
@@ -109,7 +110,7 @@ export function ClinicalReferencesList() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {references.map((reference) => {
+                {references.map((reference: ClinicalReference) => {
                   const displayTitle = getDisplayTitle(reference);
                   return (
                     <TableRow key={reference.id}>

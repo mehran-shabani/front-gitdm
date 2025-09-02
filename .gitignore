@@ -22,7 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
+.vscode
+.env
 # Env files
 .env
 .env.local
