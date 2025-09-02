@@ -21,7 +21,7 @@ export function MedicationsList() {
     return (
       <ErrorMessage
         title="Failed to load medications"
-        message={error.message}
+        message={error instanceof Error ? error.message : 'Unknown error'}
         className="mt-8"
       />
     );
