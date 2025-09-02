@@ -133,7 +133,9 @@ export function PatientsList() {
                       )}
                     </TableCell>
                     <TableCell className="text-sm text-gray-500">
-                      {format(new Date(patient.created_at), 'MMM dd, yyyy')}
+                      {patient?.created_at
+                        ? format(new Date(patient.created_at), 'MMM dd, yyyy')
+                        : <span className="text-gray-400">Not set</span>}
                     </TableCell>
                     <TableCell className="text-right">
                       <Link to={`/patients/${patient.id}`}>
