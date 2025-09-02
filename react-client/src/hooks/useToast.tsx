@@ -13,7 +13,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const addToast = (type: ToastType, title: string, message?: string) => {
-    const id = Date.now().toString();
+    // Use crypto.randomUUID() if available, otherwise fallback to timestamp + random
+    const id = typeof crypto !== 'undefined' && crypto.randomUUID 
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const newToast: Toast = { id, type, title, message };
     setToasts((prev) => [...prev, newToast]);
   };

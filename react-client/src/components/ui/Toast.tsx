@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -39,25 +39,61 @@ const iconStyles = {
 
 export function ToastItem({ toast, onClose }: ToastProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const dismissTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const remainingTimeRef = useRef(5000);
+  const startTimeRef = useRef<number | null>(null);
   const Icon = icons[toast.type];
 
   useEffect(() => {
     // Trigger enter animation
     const showTimer = setTimeout(() => setIsVisible(true), 10);
 
-    // Auto-dismiss after 5 seconds
-    const dismissTimer = setTimeout(() => {
-      setIsVisible(false);
-      setTimeout(() => onClose(toast.id), 300);
-    }, 5000);
+    // Start auto-dismiss timer
+    const startDismissTimer = () => {
+      startTimeRef.current = Date.now();
+      dismissTimerRef.current = setTimeout(() => {
+        setIsVisible(false);
+        setTimeout(() => onClose(toast.id), 300);
+      }, remainingTimeRef.current);
+    };
+
+    startDismissTimer();
 
     return () => {
       clearTimeout(showTimer);
-      clearTimeout(dismissTimer);
+      if (dismissTimerRef.current) {
+        clearTimeout(dismissTimerRef.current);
+      }
     };
   }, [toast.id, onClose]);
 
+  const handlePause = () => {
+    if (!isPaused && dismissTimerRef.current) {
+      clearTimeout(dismissTimerRef.current);
+      if (startTimeRef.current) {
+        const elapsed = Date.now() - startTimeRef.current;
+        remainingTimeRef.current = Math.max(remainingTimeRef.current - elapsed, 1000); // Keep at least 1 second
+      }
+      setIsPaused(true);
+    }
+  };
+
+  const handleResume = () => {
+    if (isPaused) {
+      startTimeRef.current = Date.now();
+      dismissTimerRef.current = setTimeout(() => {
+        setIsVisible(false);
+        setTimeout(() => onClose(toast.id), 300);
+      }, remainingTimeRef.current);
+      setIsPaused(false);
+    }
+  };
+
   const handleClose = () => {
+    if (dismissTimerRef.current) {
+      clearTimeout(dismissTimerRef.current);
+    }
     setIsVisible(false);
     setTimeout(() => onClose(toast.id), 300);
   };
@@ -74,6 +110,10 @@ export function ToastItem({ toast, onClose }: ToastProps) {
       role={toast.type === 'error' || toast.type === 'warning' ? 'alert' : 'status'}
       aria-live={toast.type === 'error' || toast.type === 'warning' ? 'assertive' : 'polite'}
       aria-atomic="true"
+      onMouseEnter={handlePause}
+      onMouseLeave={handleResume}
+      onFocus={handlePause}
+      onBlur={handleResume}
     >
       <div className="flex items-start p-4">
         <Icon className={cn('h-5 w-5 flex-shrink-0', iconStyles[toast.type])} />
@@ -84,8 +124,10 @@ export function ToastItem({ toast, onClose }: ToastProps) {
           )}
         </div>
         <button
+          type="button"
           onClick={handleClose}
-          className="ml-4 inline-flex rounded-md hover:opacity-75 focus:outline-none"
+          className="ml-4 inline-flex rounded-md hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+          aria-label="Close notification"
         >
           <X className="h-5 w-5" />
         </button>
