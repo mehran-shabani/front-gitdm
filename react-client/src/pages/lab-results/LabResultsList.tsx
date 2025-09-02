@@ -20,7 +20,7 @@ export function LabResultsList() {
     return (
       <ErrorMessage
         title="Failed to load lab results"
-        message={error.message}
+        message={error instanceof Error ? error.message : 'Unknown error'}
         className="mt-8"
       />
     );
