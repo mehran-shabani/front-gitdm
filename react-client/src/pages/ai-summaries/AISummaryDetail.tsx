@@ -15,7 +15,7 @@ export function AISummaryDetail() {
   const { addToast } = useToast();
 
   const { data, isLoading, error, refetch } = useApiAiSummariesRetrieve(
-    parseInt(id || '0'),
+    parseInt(id!, 10),
     { query: { enabled: !!id } }
   );
 
@@ -26,7 +26,7 @@ export function AISummaryDetail() {
     
     if (window.confirm('Are you sure you want to delete this AI summary?')) {
       try {
-        await deleteMutation.mutateAsync({ id: parseInt(id) });
+        await deleteMutation.mutateAsync({ id: parseInt(id, 10) });
         addToast('success', 'AI Summary Deleted', 'The AI summary has been deleted successfully.');
         navigate('/ai-summaries');
       } catch (error) {
@@ -124,7 +124,9 @@ export function AISummaryDetail() {
               <div>
                 <p className="text-sm text-gray-500">Created</p>
                 <p className="text-sm font-medium">
-                  {format(new Date(summary.created_at), 'MMM dd, yyyy h:mm a')}
+                  {summary.created_at
+                    ? format(new Date(summary.created_at), 'MMM dd, yyyy h:mm a')
+                    : '-'}
                 </p>
               </div>
             </div>
@@ -133,7 +135,9 @@ export function AISummaryDetail() {
               <div>
                 <p className="text-sm text-gray-500">Updated</p>
                 <p className="text-sm font-medium">
-                  {format(new Date(summary.updated_at), 'MMM dd, yyyy h:mm a')}
+                  {summary.updated_at
+                    ? format(new Date(summary.updated_at), 'MMM dd, yyyy h:mm a')
+                    : '-'}
                 </p>
               </div>
             </div>
@@ -156,7 +160,7 @@ export function AISummaryDetail() {
               <div className="space-y-2">
                 {summary.references.map((reference, index) => (
                   <div
-                    key={index}
+                    key={`${index}-${reference}`}
                     className="flex items-start gap-2 p-3 bg-gray-50 rounded-lg"
                   >
                     <ExternalLink className="h-4 w-4 text-gray-400 mt-0.5" />
