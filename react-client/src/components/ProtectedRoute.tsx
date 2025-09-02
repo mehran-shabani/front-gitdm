@@ -17,9 +17,26 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
+// react-client/src/components/ProtectedRoute.tsx
+
+import { Navigate, useLocation } from 'react-router-dom';
+
+ export function ProtectedRoute({ children }: ProtectedRouteProps) {
+  const { isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
+
+-  if (!isAuthenticated) {
+-    return <Navigate to="/login" replace />;
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace state={{ from: location }} />;
   }
+
+   if (isLoading) {
+     // ...loading state UI...
+   }
+
+   return <>{children}</>;
+ }
 
   return <>{children}</>;
 }
