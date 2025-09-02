@@ -13,12 +13,24 @@ import { useToast } from '../../hooks/useToast';
 import { SummaryTypeEnum } from '../../api/generated/gitdmApi.schemas';
 import { Link } from 'react-router-dom';
 
+// Type-safe form state interface
+interface FormState {
+  patient_id: string;
+  content: string;
+  content_type_model?: string;
+  object_id?: string;
+  context?: string;
+  summary_type: SummaryTypeEnum;
+  topic_hint?: string;
+  async_processing: boolean;
+}
+
 export function CreateAISummary() {
   const navigate = useNavigate();
   const { addToast } = useToast();
   const createMutation = useApiAiSummariesCreate();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormState>({
     patient_id: '',
     content: '',
     content_type_model: '',
@@ -35,13 +47,25 @@ export function CreateAISummary() {
     e.preventDefault();
     setErrors({});
 
-    // Basic validation
+    // Enhanced validation
     const newErrors: Record<string, string> = {};
+    
+    // Validate patient_id as positive integer
+    const patientId = parseInt(formData.patient_id, 10);
     if (!formData.patient_id) {
       newErrors.patient_id = 'Patient ID is required';
+    } else if (isNaN(patientId) || !Number.isInteger(patientId) || patientId <= 0) {
+      newErrors.patient_id = 'Patient ID must be a positive integer';
     }
-    if (!formData.content.trim()) {
+    
+    // Validate content
+    const trimmedContent = formData.content.trim();
+    if (!trimmedContent) {
       newErrors.content = 'Content is required';
+    } else if (trimmedContent.length < 10) {
+      newErrors.content = 'Content must be at least 10 characters';
+    } else if (trimmedContent.length > 10000) {
+      newErrors.content = 'Content must not exceed 10,000 characters';
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -50,17 +74,39 @@ export function CreateAISummary() {
     }
 
     try {
-      await createMutation.mutateAsync({
-        data: {
-          ...formData,
-          patient_id: parseInt(formData.patient_id),
-        },
-      });
+      // Build payload with only non-empty fields
+      const payload: any = {
+        patient_id: patientId,
+        content: trimmedContent,
+        summary_type: formData.summary_type,
+        async_processing: formData.async_processing,
+      };
+      
+      // Only include optional fields if they have values
+      if (formData.content_type_model?.trim()) {
+        payload.content_type_model = formData.content_type_model.trim();
+      }
+      if (formData.object_id?.trim()) {
+        payload.object_id = formData.object_id.trim();
+      }
+      if (formData.context?.trim()) {
+        payload.context = formData.context.trim();
+      }
+      if (formData.topic_hint?.trim()) {
+        payload.topic_hint = formData.topic_hint.trim();
+      }
+
+      await createMutation.mutateAsync({ data: payload });
 
       addToast('success', 'AI Summary Created', 'The AI summary has been created successfully.');
       navigate('/ai-summaries');
-    } catch (error) {
-      addToast('error', 'Failed to create AI summary', 'Please try again later.');
+    } catch (error: any) {
+      // Enhanced error handling
+      const errorMessage = error?.response?.data?.detail || 
+                          error?.response?.data?.message || 
+                          error?.message || 
+                          'An unexpected error occurred';
+      addToast('error', 'Failed to create AI summary', errorMessage);
       console.error('Failed to create AI summary:', error);
     }
   };
@@ -77,6 +123,16 @@ export function CreateAISummary() {
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
+  };
+
+  // Get error message for display
+  const getErrorMessage = (): string => {
+    if (!createMutation.error) return '';
+    const error = createMutation.error as any;
+    return error?.response?.data?.detail || 
+           error?.response?.data?.message || 
+           error?.message || 
+           'An unexpected error occurred';
   };
 
   return (
@@ -109,9 +165,17 @@ export function CreateAISummary() {
                 value={formData.patient_id}
                 onChange={handleChange}
                 placeholder="Enter patient ID"
+                min={1}
+                step={1}
+                required
+                inputMode="numeric"
+                pattern="[0-9]*"
+                aria-required="true"
+                aria-invalid={!!errors.patient_id}
+                aria-describedby={errors.patient_id ? "patient-id-error" : undefined}
               />
               {errors.patient_id && (
-                <p className="text-sm text-red-500">{errors.patient_id}</p>
+                <p id="patient-id-error" className="text-sm text-red-500">{errors.patient_id}</p>
               )}
             </div>
 
@@ -124,10 +188,19 @@ export function CreateAISummary() {
                 onChange={handleChange}
                 placeholder="Enter the medical content to be summarized..."
                 rows={6}
+                minLength={10}
+                maxLength={10000}
+                required
+                aria-required="true"
+                aria-invalid={!!errors.content}
+                aria-describedby={errors.content ? "content-error" : undefined}
               />
               {errors.content && (
-                <p className="text-sm text-red-500">{errors.content}</p>
+                <p id="content-error" className="text-sm text-red-500">{errors.content}</p>
               )}
+              <p className="text-sm text-gray-500">
+                {formData.content.length}/10,000 characters
+              </p>
             </div>
 
             <div className="space-y-2">
@@ -154,6 +227,7 @@ export function CreateAISummary() {
                 onChange={handleChange}
                 placeholder="Optional patient context for better summarization..."
                 rows={3}
+                maxLength={2000}
               />
             </div>
 
@@ -165,6 +239,7 @@ export function CreateAISummary() {
                 value={formData.topic_hint}
                 onChange={handleChange}
                 placeholder="e.g., diabetes, hypertension"
+                maxLength={200}
               />
             </div>
 
@@ -185,7 +260,7 @@ export function CreateAISummary() {
             {createMutation.error && (
               <ErrorMessage
                 title="Submission Error"
-                message={createMutation.error.message}
+                message={getErrorMessage()}
               />
             )}
 

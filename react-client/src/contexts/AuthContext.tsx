@@ -16,6 +16,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 
+// SECURITY NOTE: Storing refresh tokens in localStorage is a security risk.
+// TODO: Implement server-side changes to:
+// 1. Issue refresh tokens as HttpOnly, Secure, SameSite cookies
+// 2. Implement token rotation (new refresh token on each use)
+// 3. Add shorter expiration times for refresh tokens
+// Current implementation is temporary and should be replaced with cookie-based approach
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);

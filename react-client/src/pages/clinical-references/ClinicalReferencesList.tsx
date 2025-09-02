@@ -16,10 +16,15 @@ export function ClinicalReferencesList() {
   }
 
   if (error) {
+    // Enhanced error handling
+    const errorMessage = (error as any)?.response?.data?.detail || 
+                        (error as any)?.response?.data?.message || 
+                        error.message || 
+                        'An unexpected error occurred';
     return (
       <ErrorMessage
         title="Failed to load clinical references"
-        message={error.message}
+        message={errorMessage}
         className="mt-8"
       />
     );
@@ -27,17 +32,33 @@ export function ClinicalReferencesList() {
 
   const references = data?.data || [];
 
-  const getYearBadgeVariant = (year: number) => {
+  // Improved year validation with type safety
+  const getYearBadgeVariant = (year: number | string | null | undefined): 'default' | 'secondary' | 'outline' => {
+    // Validate and coerce input
+    const yearNum = typeof year === 'number' ? year : parseInt(String(year), 10);
+    
+    // Check if valid year
+    if (!isFinite(yearNum) || yearNum < 1900 || yearNum > new Date().getFullYear() + 1) {
+      return 'outline'; // Invalid or future year
+    }
+    
     const currentYear = new Date().getFullYear();
-    const age = currentYear - year;
+    const age = Math.max(0, currentYear - yearNum); // Clamp negative ages to 0
     
     if (age <= 2) return 'default'; // Recent
     if (age <= 5) return 'secondary'; // Fairly recent
     return 'outline'; // Older
   };
 
-  const truncateTitle = (title: string, maxLength = 60) => {
-    return title.length > maxLength ? title.substring(0, maxLength) + '...' : title;
+  // Safe title truncation with fallback
+  const truncateTitle = (title: string | null | undefined, maxLength = 60) => {
+    const safeTitle = title || 'Untitled Reference';
+    return safeTitle.length > maxLength ? safeTitle.substring(0, maxLength) + '...' : safeTitle;
+  };
+
+  // Get display title with fallback
+  const getDisplayTitle = (reference: any) => {
+    return reference.title || `Reference ${reference.id}`;
   };
 
   return (
@@ -88,56 +109,64 @@ export function ClinicalReferencesList() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {references.map((reference) => (
-                  <TableRow key={reference.id}>
-                    <TableCell className="font-medium">{reference.id}</TableCell>
-                    <TableCell>
-                      <div className="flex items-start gap-2 max-w-md">
-                        <BookOpen className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                        <span className="font-medium" title={reference.title}>
-                          {truncateTitle(reference.title)}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{reference.source}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge 
-                        variant={getYearBadgeVariant(reference.year)}
-                        className="flex items-center gap-1 w-fit"
-                      >
-                        <Calendar className="h-3 w-3" />
-                        {reference.year}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{reference.topic}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      {reference.url ? (
-                        <a
-                          href={reference.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-blue-600 hover:underline"
+                {references.map((reference) => {
+                  const displayTitle = getDisplayTitle(reference);
+                  return (
+                    <TableRow key={reference.id}>
+                      <TableCell className="font-medium">{reference.id}</TableCell>
+                      <TableCell>
+                        <div className="flex items-start gap-2 max-w-md">
+                          <BookOpen className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                          <span className="font-medium" title={displayTitle}>
+                            {truncateTitle(displayTitle)}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">{reference.source}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge 
+                          variant={getYearBadgeVariant(reference.year)}
+                          className="flex items-center gap-1 w-fit"
                         >
-                          <ExternalLink className="h-3 w-3" />
-                          View
-                        </a>
-                      ) : (
-                        <span className="text-gray-400">No URL</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Link to={`/clinical-references/${reference.id}`}>
-                        <Button variant="ghost" size="sm">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                          <Calendar className="h-3 w-3" />
+                          {reference.year || 'Unknown'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{reference.topic}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        {reference.url ? (
+                          <a
+                            href={reference.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-blue-600 hover:underline"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            View
+                          </a>
+                        ) : (
+                          <span className="text-gray-400">No URL</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Link to={`/clinical-references/${reference.id}`}>
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            aria-label={`View reference ${displayTitle}`}
+                            title={`View reference ${displayTitle}`}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           )}

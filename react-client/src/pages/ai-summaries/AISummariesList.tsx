@@ -5,12 +5,12 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Loading } from '../../components/ui/Loading';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
-import { Eye, RefreshCw, Plus } from 'lucide-react';
+import { Eye, RefreshCw, Plus, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 
 export function AISummariesList() {
-  const { data, isLoading, error, refetch } = useApiAiSummariesList();
+  const { data, isLoading, error, refetch, isFetching } = useApiAiSummariesList();
 
   if (isLoading) {
     return <Loading className="mt-8" size="lg" />;
@@ -28,6 +28,20 @@ export function AISummariesList() {
 
   const summaries = data?.data || [];
 
+  // Safe date formatting with fallback
+  const formatDate = (dateString: string | null | undefined) => {
+    if (!dateString) return '-';
+    
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '-';
+      
+      return formatDistanceToNow(date, { addSuffix: true });
+    } catch {
+      return '-';
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -44,9 +58,19 @@ export function AISummariesList() {
                 variant="outline"
                 size="sm"
                 onClick={() => refetch()}
+                disabled={isFetching}
               >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Refresh
+                {isFetching ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Refreshing...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Refresh
+                  </>
+                )}
               </Button>
               <Link to="/ai-summaries/new">
                 <Button size="sm">
@@ -102,19 +126,20 @@ export function AISummariesList() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-sm text-gray-500">
-                      {formatDistanceToNow(new Date(summary.created_at), {
-                        addSuffix: true,
-                      })}
+                      {formatDate(summary.created_at)}
                     </TableCell>
                     <TableCell className="text-sm text-gray-500">
-                      {formatDistanceToNow(new Date(summary.updated_at), {
-                        addSuffix: true,
-                      })}
+                      {formatDate(summary.updated_at)}
                     </TableCell>
                     <TableCell className="text-right">
                       <Link to={`/ai-summaries/${summary.id}`}>
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          aria-label={`View summary ${summary.id}`}
+                        >
                           <Eye className="h-4 w-4" />
+                          <span className="sr-only">View summary</span>
                         </Button>
                       </Link>
                     </TableCell>

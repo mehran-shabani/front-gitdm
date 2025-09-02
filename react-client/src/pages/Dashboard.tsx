@@ -67,12 +67,12 @@ export function Dashboard() {
           A modern healthcare management system powered by AI for better patient care.
         </p>
         <div className="flex gap-4">
-          <Link to="/ai-summaries/new">
+          <Link to="/ai-summaries/new" aria-label="Create AI Summary">
             <Button variant="secondary" size="lg">
               Create AI Summary
             </Button>
           </Link>
-          <Link to="/patients/new">
+          <Link to="/patients/new" aria-label="Add New Patient">
             <Button variant="outline" size="lg" className="text-white border-white hover:bg-white hover:text-purple-600">
               Add New Patient
             </Button>

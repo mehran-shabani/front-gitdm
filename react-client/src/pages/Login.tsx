@@ -146,10 +146,12 @@ import { isAxiosError } from 'axios';
             </Button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-gray-500">
-            <p>Demo credentials:</p>
-            <p className="font-mono">admin@example.com / password</p>
-          </div>
+          {import.meta.env.VITE_SHOW_DEMO_CREDS === 'true' && (
+            <div className="mt-6 text-center text-sm text-gray-500">
+              <p>Demo credentials:</p>
+              <p className="font-mono">admin@example.com / password</p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
