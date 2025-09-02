@@ -48,8 +48,12 @@ export function Login() {
       await login(formData.email, formData.password);
       addToast('success', 'Login Successful', 'Welcome back!');
       navigate('/');
-    } catch (error: any) {
-      addToast('error', 'Login Failed', error.response?.data?.detail || 'Invalid credentials');
+// At the top of react-client/src/pages/Login.tsx
+import { isAxiosError } from 'axios';
+...
+    } catch (err: unknown) {
+      const detail = isAxiosError(err) ? err.response?.data?.detail : undefined;
+      addToast('error', 'Login Failed', detail || 'Invalid credentials');
     } finally {
       setIsLoading(false);
     }
