@@ -24,34 +24,17 @@ function App() {
             element={
               <ProtectedRoute>
                 <Layout>
-// react-client/src/App.tsx
-
-// add Navigate to the import
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-
-function App() {
-  return (
-    <Router>
-      {/* ...other layout/components... */}
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/ai-summaries" element={<AISummariesList />} />
-        <Route path="/ai-summaries/new" element={<CreateAISummary />} />
-        <Route path="/ai-summaries/:id" element={<AISummaryDetail />} />
-        <Route path="/patients" element={<PatientsList />} />
-        <Route path="/encounters" element={<EncountersList />} />
-        <Route path="/lab-results" element={<LabResultsList />} />
-        <Route path="/medications" element={<MedicationsList />} />
-        <Route path="/clinical-references" element={<ClinicalReferencesList />} />
-       {/* fallback for any unknown route */}
-       <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-      {/* ...other layout/components... */}
-    </Router>
-  );
-}
-
-export default App;
+                  <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/ai-summaries" element={<AISummariesList />} />
+                    <Route path="/ai-summaries/new" element={<CreateAISummary />} />
+                    <Route path="/ai-summaries/:id" element={<AISummaryDetail />} />
+                    <Route path="/patients" element={<PatientsList />} />
+                    <Route path="/encounters" element={<EncountersList />} />
+                    <Route path="/lab-results" element={<LabResultsList />} />
+                    <Route path="/medications" element={<MedicationsList />} />
+                    <Route path="/clinical-references" element={<ClinicalReferencesList />} />
+                  </Routes>
                 </Layout>
               </ProtectedRoute>
             }

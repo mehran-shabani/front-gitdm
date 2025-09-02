@@ -61,7 +61,6 @@ export class ErrorBoundary extends Component<Props, State> {
                   </p>
                 </div>
               )}
-              )}
               <Button onClick={this.handleReset} className="w-full">
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Refresh Page
