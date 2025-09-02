@@ -89,9 +89,16 @@ import { isAxiosError } from 'axios';
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="you@example.com"
+                required
+                spellCheck={false}
+                autoCapitalize="none"
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? 'email-error' : undefined}
               />
               {errors.email && (
-                <p className="text-sm text-red-500">{errors.email}</p>
+                <p id="email-error" role="alert" className="text-sm text-red-500">
+                  {errors.email}
+                </p>
               )}
             </div>
 
