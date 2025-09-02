@@ -137,11 +137,11 @@ src/
 ### Code Generation
 - API client automatically generated from OpenAPI spec
 - Type-safe API calls with full TypeScript support
-- Consistent API interface across the application
+- Consistent API across the application
 
 ## 🔐 Authentication
 
-The application uses JWT authentication. To login:
+The application uses JWT authentication. To log in:
 1. Navigate to `/login`
 2. Enter your credentials
 3. The app will store tokens and redirect to dashboard
