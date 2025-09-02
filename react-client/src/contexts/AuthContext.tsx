@@ -91,7 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     try {
       const response = await loginMutation.mutateAsync({
-        data: { email, password, access: '', refresh: '' },
+        data: { email, password },
       });
 
       const { access, refresh } = response.data;
