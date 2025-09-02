@@ -25,11 +25,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Check for existing token on mount
   useEffect(() => {
     const token = localStorage.getItem(ACCESS_TOKEN_KEY);
-    if (token) {
-      setIsAuthenticated(true);
-      setupAxiosInterceptor(token);
-    }
-    setIsLoading(false);
+    (async () => {
+      if (token) {
+        setupAxiosInterceptor(token);
+        try {
+          await refreshToken();
+          setIsAuthenticated(true);
+        } catch {
+          logout();
+        }
+      }
+      setIsLoading(false);
+    })();
   }, []);
 
   // Setup axios interceptor
