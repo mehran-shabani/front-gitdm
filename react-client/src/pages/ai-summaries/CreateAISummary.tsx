@@ -51,11 +51,13 @@ export function CreateAISummary() {
     const newErrors: Record<string, string> = {};
     
     // Validate patient_id as positive integer
-    const patientId = parseInt(formData.patient_id, 10);
     if (!formData.patient_id) {
       newErrors.patient_id = 'Patient ID is required';
-    } else if (isNaN(patientId) || !Number.isInteger(patientId) || patientId <= 0) {
-      newErrors.patient_id = 'Patient ID must be a positive integer';
+    } else {
+      const patientId = parseInt(formData.patient_id, 10);
+      if (isNaN(patientId) || patientId <= 0) {
+        newErrors.patient_id = 'Patient ID must be a positive integer';
+      }
     }
     
     // Validate content
