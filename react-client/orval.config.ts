@@ -11,7 +11,7 @@ export default defineConfig({
       clean: true,
       override: {
         mutator: {
-          path: '../../api/http/axios-instance.ts',
+          path: './src/api/http/axios-instance.ts',
           name: 'createAxiosInstance',
         },
       },
