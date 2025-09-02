@@ -15,7 +15,7 @@ export const queryClient = new QueryClient({
       staleTime: 60_000,
     },
     mutations: {
-      onError: (error) => {
+      onError: (error: unknown) => {
         console.error('Mutation error:', error);
       },
     },
