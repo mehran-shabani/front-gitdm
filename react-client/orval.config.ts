@@ -7,7 +7,7 @@ export default defineConfig({
       mode: 'split',
       target: 'src/api/generated',
       client: 'react-query',
-      prettier: false,
+      prettier: true,
       clean: true,
       override: {
         mutator: {
