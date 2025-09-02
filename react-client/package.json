@@ -1,24 +1,3 @@
-{
-  "name": "react-client",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "api:generate": "orval --config orval.config.ts",
-    "api:watch": "orval --config orval.config.ts --watch"
-  },
-  "dependencies": {
-    "@tanstack/react-query": "^5.51.1",
-    "@tanstack/react-query-devtools": "^5.51.1",
-    "axios": "^1.7.9",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "zod": "^3.23.8"
-  },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
     "@types/react": "^19.1.10",
@@ -32,5 +11,7 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.1",
     "vite": "^7.1.2"
+  },
+  "engines": {
+    "node": ">=18.18.0"
   }
-}
