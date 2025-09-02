@@ -14,7 +14,11 @@ export async function createAxiosInstance<T>(
   config: AxiosRequestConfig,
   options?: AxiosRequestConfig,
 ): Promise<T> {
-  const finalConfig: AxiosRequestConfig = { ...(options ?? {}), ...config };
+  const finalConfig: AxiosRequestConfig = {
+    ...(options ?? {}),
+    ...config,
+    headers: { ...(options?.headers ?? {}), ...(config.headers ?? {}) },
+  };
   const response: AxiosResponse<T> = await axiosClient.request<T>(finalConfig);
   return response.data;
 }
