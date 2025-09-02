@@ -40,12 +40,20 @@ const iconStyles = {
 export function ToastItem({ toast, onClose }: ToastProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const dismissTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const remainingTimeRef = useRef(5000);
   const startTimeRef = useRef<number | null>(null);
   const Icon = icons[toast.type];
 
   useEffect(() => {
+    // Reset timers when toast.id changes
+    remainingTimeRef.current = 5000;
+    startTimeRef.current = null;
+    if (dismissTimerRef.current) {
+      clearTimeout(dismissTimerRef.current);
+      dismissTimerRef.current = null;
+    }
+
     // Trigger enter animation
     const showTimer = setTimeout(() => setIsVisible(true), 10);
 
@@ -110,6 +118,8 @@ export function ToastItem({ toast, onClose }: ToastProps) {
       role={toast.type === 'error' || toast.type === 'warning' ? 'alert' : 'status'}
       aria-live={toast.type === 'error' || toast.type === 'warning' ? 'assertive' : 'polite'}
       aria-atomic="true"
+      aria-hidden={!isVisible}
+      tabIndex={isVisible ? 0 : -1}
       onMouseEnter={handlePause}
       onMouseLeave={handleResume}
       onFocus={handlePause}

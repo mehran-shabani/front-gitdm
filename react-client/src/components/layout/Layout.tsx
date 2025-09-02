@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   FileText,
@@ -43,6 +43,20 @@ export function Layout({ children }: LayoutProps) {
     addToast('info', 'Logged Out', 'You have been successfully logged out.');
     navigate('/login');
   };
+
+  // Global Escape key handler for closing sidebar
+  useEffect(() => {
+    if (!sidebarOpen) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [sidebarOpen]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -102,6 +116,7 @@ export function Layout({ children }: LayoutProps) {
                 <li key={item.name}>
                   <Link
                     to={item.href}
+                    aria-current={isActive ? 'page' : undefined}
                     className={cn(
                       'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                       isActive

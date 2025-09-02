@@ -1,4 +1,5 @@
-import { HTMLAttributes, TdHTMLAttributes, ThHTMLAttributes, forwardRef, ComponentPropsWithoutRef } from 'react';
+import { forwardRef } from 'react';
+import type { HTMLAttributes, TdHTMLAttributes, ThHTMLAttributes, ComponentPropsWithoutRef } from 'react';
 import { cn } from '../../lib/utils';
 
 // Add a new props type to allow controlling scroll behavior and container classes

@@ -135,16 +135,19 @@ export function EncountersList() {
                       </Link>
                     </TableCell>
                     <TableCell className="text-sm text-gray-500">
-                      {formatDistanceToNow(parseISO(encounter.created_at), {
-                        addSuffix: true,
-                      })}
+                      {encounter.occurred_at ? (
+                        formatDistanceToNow(parseISO(encounter.occurred_at), {
+                          addSuffix: true,
+                        })
+                      ) : (
+                        '-'
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
                       <Link to={`/encounters/${encounter.id}`}>
                         <Button variant="ghost" size="sm" aria-label={`View encounter ${encounter.id}`} type="button">
                           <Eye className="h-4 w-4" />
                         </Button>
-                      </Link>
                       </Link>
                     </TableCell>
                   </TableRow>

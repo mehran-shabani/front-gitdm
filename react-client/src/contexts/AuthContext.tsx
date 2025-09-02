@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useApiTokenCreate, useApiTokenRefreshCreate } from '../api/generated/gitdmApi';
 import { axiosClient } from '../api/http/axios-instance';
-import { queryClient } from '../main';
+import { queryClient } from '../lib/queryClient';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const token = localStorage.getItem(ACCESS_TOKEN_KEY);
     (async () => {
       if (token) {
-        setupAxiosInterceptor(token);
+        applyAuthHeader(token);
         try {
           await refreshToken();
           setIsAuthenticated(true);
@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Setup axios interceptor
-  const setupAxiosInterceptor = (token: string) => {
+  const applyAuthHeader = (token: string) => {
     axiosClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   };
 
@@ -70,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       async (error) => {
         const originalRequest = error.config as { _retry?: boolean; url?: string };
         if (!originalRequest) return Promise.reject(error);
-        // مهم: روی خود درخواست رفرش دخالت نکن تا لوپ نشه
+        // Important: Do not intercept the refresh token request itself to avoid a loop
         if (originalRequest.url && /token\/refresh/i.test(originalRequest.url)) {
           return Promise.reject(error);
         }
@@ -107,7 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(ACCESS_TOKEN_KEY, access);
       localStorage.setItem(REFRESH_TOKEN_KEY, refresh);
       
-      setupAxiosInterceptor(access);
+      applyAuthHeader(access);
       setIsAuthenticated(true);
     } catch (error) {
       throw error;
@@ -121,6 +121,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryClient.clear(); // Clear React Query cache
     setIsAuthenticated(false);
   }, []);
+
+  // Cross-tab logout sync
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === REFRESH_TOKEN_KEY && e.newValue === null) {
+        // Refresh token was removed in another tab
+        logout();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [logout]);
 
   const refreshToken = async () => {
     const refresh = localStorage.getItem(REFRESH_TOKEN_KEY);
@@ -136,7 +149,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { access } = response.data;
       
       localStorage.setItem(ACCESS_TOKEN_KEY, access);
-      setupAxiosInterceptor(access);
+      applyAuthHeader(access);
     } catch (error) {
       logout();
       throw error;

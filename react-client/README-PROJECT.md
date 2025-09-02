@@ -37,7 +37,7 @@ A modern healthcare management system client built with React, TypeScript, and T
 
 - Node.js 18.18.0 or higher
 - npm or yarn
-- Backend API server running (default: http://localhost:3000)
+- Backend API server running (default: `http://localhost:3000`)
 
 ## 🚀 Getting Started
 
@@ -80,7 +80,7 @@ npm run api:generate
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173`
+The application will be available at [http://localhost:5173](http://localhost:5173)
 
 ## 📁 Project Structure
 

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
+import { isAxiosError } from 'axios';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -48,9 +49,6 @@ export function Login() {
       await login(formData.email, formData.password);
       addToast('success', 'Login Successful', 'Welcome back!');
       navigate('/');
-// At the top of react-client/src/pages/Login.tsx
-import { isAxiosError } from 'axios';
-...
     } catch (err: unknown) {
       const detail = isAxiosError(err) ? err.response?.data?.detail : undefined;
       addToast('error', 'Login Failed', detail || 'Invalid credentials');
@@ -92,6 +90,7 @@ import { isAxiosError } from 'axios';
                 required
                 spellCheck={false}
                 autoCapitalize="none"
+                disabled={isLoading}
                 aria-invalid={!!errors.email}
                 aria-describedby={errors.email ? 'email-error' : undefined}
               />
@@ -113,6 +112,7 @@ import { isAxiosError } from 'axios';
                 onChange={handleChange}
                 placeholder="••••••••"
                 required
+                disabled={isLoading}
                 aria-invalid={!!errors.password}
                 aria-describedby={errors.password ? 'password-error' : undefined}
               />
