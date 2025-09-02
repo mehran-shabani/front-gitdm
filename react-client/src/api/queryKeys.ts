@@ -75,7 +75,7 @@ export const queryKeys = {
 
 // Helper function to invalidate all queries for a specific resource
 export const invalidateResourceQueries = (
-  queryClient: any,
+  queryClient: import('@tanstack/react-query').QueryClient,
   resource: keyof typeof queryKeys
 ) => {
   const resourceKeys = queryKeys[resource];
